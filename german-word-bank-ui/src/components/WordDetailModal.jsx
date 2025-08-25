@@ -5,10 +5,10 @@ const WordDetailModal = ({ show, word, handleClose }) => {
   if (!word) return null;
 
   return (
-    <Modal show={show} onHide={handleClose} size="lg" centered data-bs-theme="dark">
+    <Modal show={show} onHide={handleClose} size="lg" centered>
       <Modal.Header closeButton>
         <Modal.Title>
-          <span className="text-warning fw-bold fs-2">
+          <span className="modal-title-glow fs-2 fw-bold">
             {word.artikel && `${word.artikel} `}{word.german_word}
           </span>
           <p className="text-muted fs-6 mb-0">{word.english_translation} / {word.turkish_translation}</p>
@@ -19,7 +19,7 @@ const WordDetailModal = ({ show, word, handleClose }) => {
         
         {word.categories && word.categories.length > 0 && (
             <div className="mb-3">
-                {word.categories.map(cat => <Badge bg="warning" text="dark" key={cat.id} className="me-1">{cat.name}</Badge>)}
+                {word.categories.map(cat => <Badge key={cat.id} className="me-1 badge-glow">{cat.name}</Badge>)}
             </div>
         )}
         
@@ -31,7 +31,7 @@ const WordDetailModal = ({ show, word, handleClose }) => {
         {word.conjugations && (
             <div>
                 <strong>Conjugations:</strong>
-                <pre className="p-2 rounded" style={{backgroundColor: '#000', color: '#fff'}}><code>{JSON.stringify(word.conjugations, null, 2)}</code></pre>
+                <pre className="p-2 rounded" style={{backgroundColor: '#000', color: '#fff', border: '1px solid var(--border-color)'}}><code>{JSON.stringify(word.conjugations, null, 2)}</code></pre>
             </div>
         )}
       </Modal.Body>

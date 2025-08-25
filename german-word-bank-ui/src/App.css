@@ -1,42 +1,158 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* --- Global Styles & Variables --- */
+:root {
+  --background-color: #000000;
+  --primary-red: #ff0d0d;
+  --glow-color: rgba(255, 13, 13, 0.5);
+  --text-color: #969292; /* <--- Changed to pure white */
+  --border-color: rgba(255, 13, 13, 0.3);
+  --card-bg: #1a1a1a;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+body {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
+  font-family: 'Segoe UI', Roboto, sans-serif;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* --- Animation Keyframes --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+@keyframes pulse-glow {
+  /* Reduced shadow size from 8px/16px to 5px/10px */
+  0% { text-shadow: 0 0 3px var(--primary-red), 0 0 5px var(--primary-red); }
+  50% { text-shadow: 0 0 5px var(--primary-red), 0 0 10px var(--glow-color); }
+  100% { text-shadow: 0 0 3px var(--primary-red), 0 0 5px var(--primary-red); }
 }
 
-.card {
-  padding: 2em;
+/* --- Main App Container & Header --- */
+.app-container {
+  background-color: var(--background-color);
+  min-height: 100vh;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
 }
 
-.read-the-docs {
+.header-title {
+  color: var(--primary-red);
+  font-weight: bold;
+  animation: pulse-glow 3s infinite;
+}
+
+.header-subtitle {
+  color: #a0a0a0;
+  font-size: 1.25rem;
+}
+
+/* --- Search Bar & Add Button --- */
+.search-input-group .form-control {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  box-shadow: 0 0 8px rgba(255, 13, 13, 0); /* Initial transparent glow */
+  transition: all 0.3s ease-in-out;
+}
+
+.search-input-group .form-control:focus {
+  background-color: #000;
+  border-color: var(--primary-red);
+  /* Reduced shadow size from 8px to 5px */
+  box-shadow: 0 0 5px var(--glow-color);
+  color: #fff;
+}
+
+.search-input-group .form-control::placeholder {
   color: #888;
+}
+
+.btn-glow {
+  background-color: var(--primary-red);
+  border-color: var(--primary-red);
+  color: #fff;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+.btn-glow:hover, .btn-glow:focus {
+  background-color: #d10000;
+  border-color: #d10000;
+  /* Reduced shadow sizes from 15px/25px to 10px/15px */
+  box-shadow: 0 0 10px var(--glow-color), 0 0 15px var(--glow-color);
+  transform: scale(1.05);
+}
+
+
+/* --- Word Cards --- */
+.word-card {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.word-card:hover {
+  transform: translateY(-5px) scale(1.03);
+  /* Reduced shadow size from 15px to 10px */
+  box-shadow: 0 0 10px var(--glow-color);
+  border-color: var(--primary-red) !important;
+}
+
+.word-card .card-title {
+  color: var(--primary-red) !important;
+  font-weight: bold;
+}
+
+.word-card .card-text {
+  color: #969292 !important;
+}
+
+/* --- Modals --- */
+.modal-content {
+    background-color: #0c0c0c !important;
+    border: 1px solid var(--border-color) !important;
+    /* Reduced shadow size from 25px to 15px */
+    box-shadow: 0 0 15px var(--glow-color);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.modal-title-glow {
+    color: var(--primary-red) !important;
+    /* Reduced shadow size from 5px to 3px */
+    text-shadow: 0 0 3px var(--glow-color);
+}
+
+/* --- Form Elements in Modal --- */
+.modal-body .form-control, .modal-body .form-select {
+    background-color: #1a1a1a;
+    border-color: var(--border-color);
+    /* CHANGED: Added !important to ensure this rule is applied */
+    color: var(--text-color) !important; 
+}
+
+/* ADDED: New rule to style the placeholder text */
+.modal-body .form-control::placeholder {
+  color: #999; /* A lighter gray for placeholder text */
+}
+
+.modal-body .form-control:focus, .modal-body .form-select:focus {
+    background-color: #000;
+    border-color: var(--primary-red);
+    box-shadow: 0 0 8px var(--glow-color);
+}
+
+/* --- General --- */
+.spinner-border {
+    color: var(--primary-red) !important;
+}
+
+.alert-custom {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
 }

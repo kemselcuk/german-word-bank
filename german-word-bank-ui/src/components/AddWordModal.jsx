@@ -4,6 +4,7 @@ import { Modal, Button, Form, Row, Col, Alert } from 'react-bootstrap';
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded }) => {
+  // ... (State and handler logic remains the same) ...
   const [wordType, setWordType] = useState('other');
   const [formData, setFormData] = useState({
     german_word: initialWord || '',
@@ -75,13 +76,15 @@ const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded 
     }
   };
 
+
   return (
-    <Modal show={show} onHide={handleClose} size="lg" centered data-bs-theme="dark">
+    <Modal show={show} onHide={handleClose} size="lg" centered>
       <Modal.Header closeButton>
-        <Modal.Title className="text-warning">Add a New Word</Modal.Title>
+        <Modal.Title className="modal-title-glow">Add a New Word</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
+          {/* Form fields remain the same */}
           <Form.Group className="mb-3">
             <Form.Label>Word Type</Form.Label>
             <Form.Select value={wordType} onChange={(e) => setWordType(e.target.value)}>
@@ -126,7 +129,7 @@ const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded 
 
           <div className="d-flex justify-content-end">
             <Button variant="secondary" onClick={handleClose} className="me-2">Cancel</Button>
-            <Button variant="warning" type="submit" disabled={isSubmitting}>
+            <Button className="btn-glow" type="submit" disabled={isSubmitting}>
               {isSubmitting ? 'Adding...' : 'Add Word'}
             </Button>
           </div>

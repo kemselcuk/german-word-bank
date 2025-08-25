@@ -11,6 +11,9 @@ import {
   Button
 } from 'react-bootstrap';
 
+// Import our new stylesheet
+import './App.css'; 
+
 // Import separated components
 import WordCard from './components/WordCard.jsx';
 import AddWordModal from './components/AddWordModal.jsx';
@@ -21,7 +24,7 @@ const API_BASE_URL = 'http://127.0.0.1:8000';
 
 // --- Main App Component ---
 export default function App() {
-  // --- State Management ---
+  // ... (State Management logic remains the same) ...
   const [words, setWords] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +34,7 @@ export default function App() {
   const [selectedWord, setSelectedWord] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // --- Data Fetching ---
+  // ... (Data Fetching logic remains the same) ...
   const fetchWords = useCallback(async () => {
     setError(null);
     try {
@@ -64,7 +67,8 @@ export default function App() {
     loadData();
   }, [fetchWords, fetchCategories]);
 
-  // --- Event Handlers ---
+
+  // ... (Event Handlers logic remains the same) ...
   const handleOpenAddModal = () => setIsAddModalOpen(true);
   const handleCloseAddModal = () => setIsAddModalOpen(false);
   
@@ -88,14 +92,14 @@ export default function App() {
 
   const renderContent = () => {
     if (isLoading) {
-      return <div className="text-center"><Spinner animation="border" variant="warning" /></div>;
+      return <div className="text-center"><Spinner animation="border" /></div>;
     }
     if (error) {
-      return <Alert variant="danger" className="text-center">{error}</Alert>;
+      return <Alert className="text-center alert-custom">{error}</Alert>;
     }
     if (words.length === 0) {
       return (
-        <Alert variant="info" className="text-center bg-dark text-white border-info">
+        <Alert className="text-center alert-custom">
           No words found yet. Add your first word using the button above!
         </Alert>
       );
@@ -105,8 +109,13 @@ export default function App() {
     }
     return (
       <Row xs={2} sm={3} md={4} lg={5} className="g-4">
-        {filteredWords.map(word => (
-          <WordCard key={word.id} word={word} onClick={handleOpenDetailModal} />
+        {filteredWords.map((word, index) => (
+          <WordCard 
+            key={word.id} 
+            word={word} 
+            onClick={handleOpenDetailModal} 
+            style={{ animationDelay: `${index * 50}ms` }} // Staggered animation
+          />
         ))}
       </Row>
     );
@@ -114,18 +123,18 @@ export default function App() {
 
   // --- Render UI ---
   return (
-    <div className="text-light min-vh-100 py-5">
+    <div className="app-container">
       <Container>
         <header className="text-center mb-5">
-          <h1 className="display-3 fw-bold" style={{ color: '#ffc107' }}>
+          <h1 className="display-3 header-title">
             Wortschatz
           </h1>
-          <p className="text-muted fs-5">Your Personal German Word Bank</p>
+          <p className="header-subtitle">Your Personal German Word Bank</p>
         </header>
 
         <Row className="justify-content-center mb-5">
           <Col md={8} lg={6}>
-            <InputGroup>
+            <InputGroup className="search-input-group">
               <Form.Control
                 size="lg"
                 type="text"
@@ -134,7 +143,7 @@ export default function App() {
                 placeholder="Search a word or add a new one..."
                 className="form-control"
               />
-              <Button variant="warning" onClick={handleOpenAddModal}>
+              <Button className="btn-glow" onClick={handleOpenAddModal}>
                 <Plus size={24} />
               </Button>
             </InputGroup>

@@ -1,8 +1,13 @@
+# main.py
 # This is the main entry point for the FastAPI application.
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 import uvicorn
+
+# --- ADD THIS IMPORT ---
+from fastapi.middleware.cors import CORSMiddleware
+# -----------------------
 
 from database import engine, get_db
 import models
@@ -17,6 +22,23 @@ app = FastAPI(
     description="An API to store and manage German words, their translations, and usage.",
     version="1.0.0",
 )
+
+# --- ADD THIS SECTION FOR CORS ---
+# This defines which origins (frontends) are allowed to communicate with our API.
+origins = [
+    "http://localhost:5173", # The address of your React (Vite) frontend
+    "http://localhost:3000", # In case you use Create React App in the future
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"], # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"], # Allows all headers
+)
+# ---------------------------------
+
 
 # --- API Endpoints ---
 

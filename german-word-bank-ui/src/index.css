@@ -1,0 +1,69 @@
+/* Gradient background for the entire page */
+body {
+  background-image: linear-gradient(to bottom right, #212529, #000000);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* --- Custom Dark Modal Styles --- */
+
+/* Main modal window */
+.modal-content {
+  background-color: #1a1a1a; /* Very dark gray, almost black */
+  color: #f8f9fa;
+  border: 1px solid #ffc107; /* Yellow border */
+}
+
+/* Modal header */
+.modal-header {
+  border-bottom-color: #495057;
+}
+
+/* Modal footer */
+.modal-footer {
+  border-top-color: #495057;
+}
+
+/* White close button for the modal */
+.btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* --- Dark Form Input Styles for Modals --- */
+
+/* Text inputs, textareas */
+.form-control {
+  background-color: #000000;
+  color: #ffffff;
+  border-color: #495057;
+}
+
+.form-control:focus {
+  background-color: #000000;
+  color: #ffffff;
+  border-color: #ffc107; /* Yellow border on focus */
+  box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+/* Select (dropdown) inputs */
+.form-select {
+  background-color: #000000;
+  color: #ffffff;
+  border-color: #495057;
+}
+
+.form-select:focus {
+  border-color: #ffc107;
+  box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+/* --- Word Card Hover Effects --- */
+
+.word-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.word-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 193, 7, 0.7); /* Stronger yellow glow */
+}

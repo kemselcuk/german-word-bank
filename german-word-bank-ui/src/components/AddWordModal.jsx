@@ -22,16 +22,29 @@ const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
+  const wordTypeOptions = [
+    { value: 'other', label: 'Other' },
+    { value: 'noun', label: 'Noun' },
+    { value: 'verb', label: 'Verb' }
+  ];
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleCategoryChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, option => parseInt(option.value));
-    setFormData(prev => ({ ...prev, category_ids: selectedOptions }));
+// 2. ADD this new handler for the category pills
+  const handleCategoryClick = (categoryId) => {
+    setFormData(prev => {
+      const currentCategoryIds = prev.category_ids;
+      // If the ID is already selected, remove it. Otherwise, add it.
+      const newCategoryIds = currentCategoryIds.includes(categoryId)
+        ? currentCategoryIds.filter(id => id !== categoryId)
+        : [...currentCategoryIds, categoryId];
+      
+      return { ...prev, category_ids: newCategoryIds };
+    });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -87,11 +100,17 @@ const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded 
           {/* Form fields remain the same */}
           <Form.Group className="mb-3">
             <Form.Label>Word Type</Form.Label>
-            <Form.Select value={wordType} onChange={(e) => setWordType(e.target.value)}>
-              <option value="other">Other (Adjective, etc.)</option>
-              <option value="noun">Noun</option>
-              <option value="verb">Verb</option>
-            </Form.Select>
+            <div className="category-pill-container">
+              {wordTypeOptions.map(opt => (
+                <div
+                  key={opt.value}
+                  className={`category-pill ${wordType === opt.value ? 'selected' : ''}`}
+                  onClick={() => setWordType(opt.value)}
+                >
+                  {opt.label}
+                </div>
+              ))}
+            </div>
           </Form.Group>
 
           <Row>
@@ -120,9 +139,20 @@ const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded 
 
           <Form.Group className="mb-3">
             <Form.Label>Categories</Form.Label>
-            <Form.Select multiple htmlSize={5} name="category_ids" value={formData.category_ids} onChange={handleCategoryChange}>
-              {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
-            </Form.Select>
+            <div className="category-pill-container">
+              {categories.map(cat => {
+                const isSelected = formData.category_ids.includes(cat.id);
+                return (
+                  <div
+                    key={cat.id}
+                    className={`category-pill ${isSelected ? 'selected' : ''}`}
+                    onClick={() => handleCategoryClick(cat.id)}
+                  >
+                    {cat.name}
+                  </div>
+                );
+              })}
+            </div>
           </Form.Group>
           
           {submitError && <Alert variant="danger">{submitError}</Alert>}

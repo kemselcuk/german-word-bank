@@ -18,6 +18,7 @@ import './App.css';
 import WordCard from './components/WordCard.jsx';
 import AddWordModal from './components/AddWordModal.jsx';
 import WordDetailModal from './components/WordDetailModal.jsx';
+import Header from './components/Header.jsx'; 
 
 // --- Configuration ---
 const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -122,41 +123,46 @@ export default function App() {
   };
 
   // --- Render UI ---
-  return (
-    <div className="app-container">
-      <Container>
-        <header className="text-center mb-5">
-          <h1 className="display-3 header-title">
-            Wortschatz
-          </h1>
-          <p className="header-subtitle">Your Personal German Word Bank</p>
-        </header>
+return (
+    <>
+      <Header />
+      
+      <div className="app-container content-wrapper">
+        <Container>
+          {/* This header is the title on the page, not the new navbar */}
+          <header className="text-center mb-5">
+            <h1 className="display-3 header-title">
+              Wortschatz
+            </h1>
+            <p className="header-subtitle">Your Personal German Word Bank</p>
+          </header>
 
-        <Row className="justify-content-center mb-5">
-          <Col md={8} lg={6}>
-            <InputGroup className="search-input-group">
-              <Form.Control
-                size="lg"
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search a word or add a new one..."
-                className="form-control"
-              />
-              <Button className="btn-glow" onClick={handleOpenAddModal}>
-                <Plus size={24} />
-              </Button>
-            </InputGroup>
-          </Col>
-        </Row>
+          <Row className="justify-content-center mb-5">
+            <Col md={8} lg={6}>
+              <InputGroup className="search-input-group">
+                <Form.Control
+                  size="lg"
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search a word or add a new one..."
+                  className="form-control"
+                />
+                <Button className="btn-glow" onClick={handleOpenAddModal}>
+                  <Plus size={24} />
+                </Button>
+              </InputGroup>
+            </Col>
+          </Row>
 
-        <main>
-          {renderContent()}
-        </main>
-      </Container>
+          <main>
+            {renderContent()}
+          </main>
+        </Container>
 
-      {isAddModalOpen && <AddWordModal show={isAddModalOpen} initialWord={searchTerm} categories={categories} handleClose={handleCloseAddModal} onWordAdded={handleWordAdded} />}
-      {isDetailModalOpen && <WordDetailModal show={isDetailModalOpen} word={selectedWord} handleClose={handleCloseDetailModal} />}
-    </div>
+        {isAddModalOpen && <AddWordModal show={isAddModalOpen} initialWord={searchTerm} categories={categories} handleClose={handleCloseAddModal} onWordAdded={handleWordAdded} />}
+        {isDetailModalOpen && <WordDetailModal show={isDetailModalOpen} word={selectedWord} handleClose={handleCloseDetailModal} />}
+      </div>
+    </>
   );
 }

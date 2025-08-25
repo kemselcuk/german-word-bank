@@ -293,3 +293,13 @@ body {
   margin-bottom: 3rem;
   padding: 0.5rem;
 }
+
+.category-pill-add {
+  border-style: dashed;
+  color: #ccc;
+}
+
+.category-pill-add:hover {
+  border-style: solid;
+  color: var(--primary-red) !important;
+}

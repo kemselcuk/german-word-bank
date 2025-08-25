@@ -1,6 +1,7 @@
 import React from 'react';
+import { Plus } from 'lucide-react';
 
-const CategoryFilter = ({ categories, selectedCategory, onSelectCategory }) => {
+const CategoryFilter = ({ categories, selectedCategory, onSelectCategory, onAddCategory }) => {
   return (
     <div className="category-filter-bar">
       {/* "All" button, selected if no specific category is chosen */}
@@ -21,6 +22,14 @@ const CategoryFilter = ({ categories, selectedCategory, onSelectCategory }) => {
           {cat.name}
         </div>
       ))}
+      {/* Add the new button */}
+      <div
+        className="category-pill category-pill-add"
+        onClick={onAddCategory}
+        title="Create New Category"
+      >
+        <Plus size={18} />
+      </div>
     </div>
   );
 };

@@ -21,6 +21,7 @@ import WordDetailModal from './components/WordDetailModal.jsx';
 import Header from './components/Header.jsx'; 
 import CategoryFilter from './components/CategoryFilter.jsx';
 import UpdateWordModal from './components/UpdateWordModal.jsx';
+import AddCategoryModal from './components/AddCategoryModal.jsx';
 
 // --- Configuration ---
 const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -39,6 +40,8 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [wordToUpdate, setWordToUpdate] = useState(null);
+  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
+  
 
   // ... (Data Fetching logic remains the same) ...
   const fetchWords = useCallback(async () => {
@@ -96,6 +99,14 @@ export default function App() {
   const handleCloseUpdateModal = () => {
     setIsUpdateModalOpen(false);
     setWordToUpdate(null);
+  };
+
+  const handleOpenAddCategoryModal = () => setIsAddCategoryModalOpen(true);
+  const handleCloseAddCategoryModal = () => setIsAddCategoryModalOpen(false);
+
+  const handleCategoryAdded = () => {
+    fetchCategories(); // Refetch categories to show the new one
+    handleCloseAddCategoryModal();
   };
 
   const handleWordAdded = () => {
@@ -189,6 +200,7 @@ return (
               categories={categories}
               selectedCategory={selectedCategory}
               onSelectCategory={setSelectedCategory}
+              onAddCategory={handleOpenAddCategoryModal}
             />
           )}
 
@@ -207,8 +219,15 @@ return (
           categories={categories}
           handleClose={handleCloseUpdateModal}
           onWordUpdated={handleWordUpdated}
+        /> 
+        )}
+        {isAddCategoryModalOpen && (
+        <AddCategoryModal
+          show={isAddCategoryModalOpen}
+          handleClose={handleCloseAddCategoryModal}
+          onCategoryAdded={handleCategoryAdded}
         />
-      )}
+        )}
       </div>
     </>
   );

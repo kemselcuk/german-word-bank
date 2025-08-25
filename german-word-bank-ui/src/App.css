@@ -106,7 +106,7 @@ body {
 }
 
 .word-card .card-text {
-  color: #969292 !important;
+  color: #888 !important;
 }
 
 /* --- Modals --- */
@@ -138,7 +138,7 @@ body {
 
 /* ADDED: New rule to style the placeholder text */
 .modal-body .form-control::placeholder {
-  color: #999; /* A lighter gray for placeholder text */
+  color: #888; /* A lighter gray for placeholder text */
 }
 
 .modal-body .form-control:focus, .modal-body .form-select:focus {
@@ -234,4 +234,62 @@ body {
 .modal-header .btn-close:hover {
   opacity: 1;
   transform: scale(1.1);
+}
+
+/* --- Conjugation Form --- */
+.conjugation-label {
+  background-color: #333;
+  border-color: var(--border-color);
+  color: #ccc;
+  min-width: 90px; /* Ensures all labels are the same width */
+  justify-content: center;
+}
+
+/* --- Conjugation Display (Detail Modal) --- */
+.conjugation-display {
+  margin-top: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  background-color: #000;
+  max-width: 300px;
+  padding: 1rem;
+}
+
+.tense-title {
+  color: var(--primary-red);
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.conjugation-row {
+  display: flex;
+  padding: 0.4rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Add a faint background to every other row for readability */
+.conjugation-row:nth-of-type(odd) {
+  background-color: var(--card-bg);
+}
+
+.conjugation-pronoun {
+  color: #ccc;
+  min-width: 120px;
+}
+
+.conjugation-verb {
+  font-weight: bold;
+  color: #fff;
+}
+
+/* --- Category Filter Bar --- */
+.category-filter-bar {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
+  padding: 0.5rem;
 }

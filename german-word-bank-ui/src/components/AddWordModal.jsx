@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Modal, Button, Form, Row, Col, Alert } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Modal, Button, Form, Row, Col, Alert, InputGroup } from 'react-bootstrap';
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
@@ -28,6 +28,31 @@ const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded 
     { value: 'verb', label: 'Verb' }
   ];
 
+  // Define pronouns outside the component
+  const pronouns = [
+  { key: 'ich', label: 'ich' },
+  { key: 'du', label: 'du' },
+  { key: 'er_sie_es', label: 'er/sie/es' },
+  { key: 'wir', label: 'wir' },
+  { key: 'ihr', label: 'ihr' },
+  { key: 'sie_Sie', label: 'sie/Sie' },
+];
+
+const [conjugationInputs, setConjugationInputs] = useState({
+  ich: '', du: '', er_sie_es: '', wir: '', ihr: '', sie_Sie: ''
+});
+
+useEffect(() => {
+  if (wordType !== 'verb') {
+    setConjugationInputs({ ich: '', du: '', er_sie_es: '', wir: '', ihr: '', sie_Sie: '' });
+  }
+}, [wordType]);
+
+const handleConjugationChange = (e) => {
+  const { name, value } = e.target;
+  setConjugationInputs(prev => ({ ...prev, [name]: value }));
+};
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -52,17 +77,26 @@ const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded 
 
     let payload = { ...formData };
 
-    if (wordType === 'verb' && payload.conjugations) {
-      try {
-        payload.conjugations = JSON.parse(payload.conjugations);
-      } catch (err) {
-        setSubmitError('Invalid JSON format for conjugations.');
-        setIsSubmitting(false);
-        return;
+    if (wordType === 'verb') {
+    const formattedConjugations = {
+      präsens: {
+        ich: conjugationInputs.ich,
+        du: conjugationInputs.du,
+        'er/sie/es': conjugationInputs.er_sie_es,
+        wir: conjugationInputs.wir,
+        ihr: conjugationInputs.ihr,
+        'sie/Sie': conjugationInputs.sie_Sie,
       }
-    } else {
-        delete payload.conjugations;
+    };
+    
+    // Clean up any empty fields
+    for (const key in formattedConjugations.präsens) {
+      if (!formattedConjugations.präsens[key]) {
+        delete formattedConjugations.präsens[key];
+      }
     }
+    payload.conjugations = formattedConjugations;
+  }
 
     if (wordType !== 'noun') {
       delete payload.artikel;
@@ -126,11 +160,23 @@ const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded 
             </Row>
           )}
 
-          {wordType === 'verb' && (
-            <Form.Group className="mb-3">
-              <Form.Control as="textarea" name="conjugations" value={formData.conjugations} onChange={handleChange} placeholder='Conjugations (JSON format) e.g., {"präsens": {"ich": "lerne"}}' rows={4} />
-            </Form.Group>
-          )}
+           {wordType === 'verb' && (
+             <Form.Group className="mb-3">
+               <Form.Label>Präsens (Present Tense) Conjugations</Form.Label>
+               {pronouns.map(p => (
+                 <InputGroup className="mb-2" key={p.key}>
+                   <InputGroup.Text className="conjugation-label">{p.label}</InputGroup.Text>
+                   <Form.Control
+                     type="text"
+                     name={p.key}
+                     value={conjugationInputs[p.key]}
+                     onChange={handleConjugationChange}
+                     placeholder={`Conjugation for ${p.label}`}
+                   />
+                 </InputGroup>
+               ))}
+             </Form.Group>
+           )}
 
           <Form.Group className="mb-3"><Form.Control as="textarea" name="basic_sentence" value={formData.basic_sentence} onChange={handleChange} placeholder="Basic Sentence (A1/A2)" rows={2} /></Form.Group>
           <Form.Group className="mb-3"><Form.Control as="textarea" name="advanced_sentence" value={formData.advanced_sentence} onChange={handleChange} placeholder="Advanced Sentence (B2/C1)" rows={3} /></Form.Group>

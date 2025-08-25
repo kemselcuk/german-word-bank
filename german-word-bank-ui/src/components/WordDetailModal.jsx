@@ -11,7 +11,7 @@ const WordDetailModal = ({ show, word, handleClose }) => {
           <span className="modal-title-glow fs-2 fw-bold">
             {word.artikel && `${word.artikel} `}{word.german_word}
           </span>
-          <p className="text-muted fs-6 mb-0">{word.english_translation} / {word.turkish_translation}</p>
+          <p className="text fs-7 mb-0">{word.english_translation} --- {word.turkish_translation}</p>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -28,11 +28,25 @@ const WordDetailModal = ({ show, word, handleClose }) => {
         {word.advanced_sentence && <p><strong>Advanced Sentence:</strong> {word.advanced_sentence}</p>}
         {word.note && <p><strong>Note:</strong> {word.note}</p>}
 
-        {word.conjugations && (
-            <div>
-                <strong>Conjugations:</strong>
-                <pre className="p-2 rounded" style={{backgroundColor: '#000', color: '#fff', border: '1px solid var(--border-color)'}}><code>{JSON.stringify(word.conjugations, null, 2)}</code></pre>
+        {word.conjugations && Object.keys(word.conjugations).length > 0 && (
+          <div>
+            <strong>Conjugations:</strong>
+            <div className="conjugation-display">
+              {Object.entries(word.conjugations).map(([tense, pairs]) => (
+                <div key={tense} className="tense-block">
+                  <h5 className="tense-title">
+                    {tense.charAt(0).toUpperCase() + tense.slice(1)}
+                  </h5>
+                  {Object.entries(pairs).map(([pronoun, verb]) => (
+                    <div key={pronoun} className="conjugation-row">
+                      <span className="conjugation-pronoun">{pronoun}</span>
+                      <span className="conjugation-verb">{verb}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
+          </div>
         )}
       </Modal.Body>
     </Modal>

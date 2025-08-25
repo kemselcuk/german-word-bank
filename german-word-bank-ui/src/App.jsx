@@ -19,6 +19,7 @@ import WordCard from './components/WordCard.jsx';
 import AddWordModal from './components/AddWordModal.jsx';
 import WordDetailModal from './components/WordDetailModal.jsx';
 import Header from './components/Header.jsx'; 
+import CategoryFilter from './components/CategoryFilter.jsx';
 
 // --- Configuration ---
 const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -34,6 +35,7 @@ export default function App() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedWord, setSelectedWord] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   // ... (Data Fetching logic remains the same) ...
   const fetchWords = useCallback(async () => {
@@ -87,9 +89,17 @@ export default function App() {
     setSearchTerm('');
   };
 
-  const filteredWords = words.filter(word => 
-    word.german_word.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredWords = words.filter(word => {
+    // Category filter logic
+    const categoryMatch = selectedCategory
+      ? word.categories.some(cat => cat.id === selectedCategory)
+      : true; // If no category is selected, all words match
+
+    // Search term filter logic
+    const searchMatch = word.german_word.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return categoryMatch && searchMatch;
+  });
 
   const renderContent = () => {
     if (isLoading) {
@@ -154,6 +164,15 @@ return (
               </InputGroup>
             </Col>
           </Row>
+
+          {categories.length > 0 && (
+            <CategoryFilter
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+            />
+          )}
+
 
           <main>
             {renderContent()}

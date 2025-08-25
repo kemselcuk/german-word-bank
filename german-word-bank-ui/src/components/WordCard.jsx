@@ -8,7 +8,7 @@ const WordCard = ({ word, onClick, style }) => (
       onClick={() => onClick(word)}
     >
       <Card.Body>
-        <Card.Title>{word.german_word}</Card.Title>
+        <Card.Title>{word.artikel && `${word.artikel} `}{word.german_word}</Card.Title>
         <Card.Text>{word.english_translation}</Card.Text>
       </Card.Body>
     </Card>

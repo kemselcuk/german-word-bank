@@ -20,6 +20,7 @@ import AddWordModal from './components/AddWordModal.jsx';
 import WordDetailModal from './components/WordDetailModal.jsx';
 import Header from './components/Header.jsx'; 
 import CategoryFilter from './components/CategoryFilter.jsx';
+import UpdateWordModal from './components/UpdateWordModal.jsx';
 
 // --- Configuration ---
 const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -36,6 +37,8 @@ export default function App() {
   const [selectedWord, setSelectedWord] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [wordToUpdate, setWordToUpdate] = useState(null);
 
   // ... (Data Fetching logic remains the same) ...
   const fetchWords = useCallback(async () => {
@@ -84,9 +87,25 @@ export default function App() {
     setSelectedWord(null);
   };
 
+  const handleOpenUpdateModal = (word) => {
+    setWordToUpdate(word);
+    setIsDetailModalOpen(false); // Close detail modal before opening update modal
+    setIsUpdateModalOpen(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setIsUpdateModalOpen(false);
+    setWordToUpdate(null);
+  };
+
   const handleWordAdded = () => {
     fetchWords();
     setSearchTerm('');
+  };
+
+  const handleWordUpdated = () => {
+    fetchWords();
+    handleCloseUpdateModal();
   };
 
   const filteredWords = words.filter(word => {
@@ -180,7 +199,16 @@ return (
         </Container>
 
         {isAddModalOpen && <AddWordModal show={isAddModalOpen} initialWord={searchTerm} categories={categories} handleClose={handleCloseAddModal} onWordAdded={handleWordAdded} />}
-        {isDetailModalOpen && <WordDetailModal show={isDetailModalOpen} word={selectedWord} handleClose={handleCloseDetailModal} />}
+        {isDetailModalOpen && <WordDetailModal show={isDetailModalOpen} word={selectedWord} handleClose={handleCloseDetailModal} onEdit={handleOpenUpdateModal} />}
+        {isUpdateModalOpen && (
+        <UpdateWordModal
+          show={isUpdateModalOpen}
+          word={wordToUpdate}
+          categories={categories}
+          handleClose={handleCloseUpdateModal}
+          onWordUpdated={handleWordUpdated}
+        />
+      )}
       </div>
     </>
   );

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Modal, Badge } from 'react-bootstrap';
+import { Modal, Badge, Button } from 'react-bootstrap';
+import { Pencil } from 'lucide-react';
 
-const WordDetailModal = ({ show, word, handleClose }) => {
+const WordDetailModal = ({ show, word, handleClose, onEdit }) => {
   if (!word) return null;
 
   return (
@@ -49,6 +50,12 @@ const WordDetailModal = ({ show, word, handleClose }) => {
           </div>
         )}
       </Modal.Body>
+      <Modal.Footer>
+        <Button variant="outline-warning" onClick={() => onEdit(word)}>
+          <Pencil size={16} className="me-2" />
+          Edit Word
+        </Button>
+      </Modal.Footer>
     </Modal>
   );
 };

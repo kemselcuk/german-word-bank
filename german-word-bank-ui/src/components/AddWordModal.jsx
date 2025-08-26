@@ -12,7 +12,6 @@ const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded 
     turkish_translation: '',
     artikel: '',
     plural_form: '',
-    conjugations: '',
     basic_sentence: '',
     advanced_sentence: '',
     note: '',

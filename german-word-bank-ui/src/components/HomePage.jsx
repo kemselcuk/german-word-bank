@@ -5,7 +5,7 @@ import WordCard from './WordCard.jsx'; // We'll reuse the WordCard component
 
 const HomePage = ({ words, onOpenAddWordModal, onWordClick }) => {
   // Get the 10 most recently added words (assuming the API returns them in descending order)
-  const recentWords = words.slice(0, 10);
+  const recentWords = [...words].reverse().slice(0, 10);
 
   return (
     <Container>

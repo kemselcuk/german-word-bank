@@ -4,6 +4,7 @@
 from sqlalchemy.orm import Session
 import models
 import schemas
+from typing import Optional
 
 # --- Word CRUD Functions ---
 
@@ -19,17 +20,25 @@ def get_word_by_german_word(db: Session, german_word: str):
     #     """Fetch a list of words with pagination."""
     #     return db.query(models.Word).offset(skip).limit(limit).all()
 
-def get_words(db: Session, skip: int = 0, limit: int = 100):
+def get_words(db: Session, skip: int = 0, limit: int = 100, category_id: Optional[int] = None):
     """
     Fetch a list of words with pagination and the total count.
     """
-    # Query to get the paginated list of words
-    words = db.query(models.Word).offset(skip).limit(limit).all()
-    
-    # Query to get the total number of words in the table
-    total_count = db.query(models.Word).count()
-    
-    # Return both in a dictionary
+    # Start with a base query that can be modified
+    query = db.query(models.Word)
+
+    # If a category_id is provided, apply a filter to the query
+    if category_id is not None:
+        # This uses the 'categories' relationship defined in your models.
+        # It finds words where ANY of their linked categories match the given id.
+        query = query.filter(models.Word.categories.any(id=category_id))
+
+    # First, get the total count from the (potentially filtered) query
+    total_count = query.count()
+
+    # Then, apply pagination and retrieve the words from the same query
+    words = query.offset(skip).limit(limit).all()
+
     return {"words": words, "total_count": total_count}
 
 def create_word(db: Session, word: schemas.WordCreate):

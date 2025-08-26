@@ -529,3 +529,30 @@ color: var(--primary-red) !important;
   right: 1rem;
   color: var(--primary-red);
 }
+
+/* --- Pagination --- */
+.pagination .page-link {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+  box-shadow: none;
+}
+
+.pagination .page-link:hover {
+  background-color: #2a2a2a;
+  border-color: var(--primary-red);
+  color: var(--primary-red);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--primary-red);
+  border-color: var(--primary-red);
+  color: #ffff00; /* Yellow text for the active page */
+  font-weight: bold;
+}
+
+.pagination .page-item.disabled .page-link {
+  background-color: #1a1a1a;
+  border-color: var(--border-color);
+  color: #555;
+}

@@ -56,11 +56,16 @@ export default function App() {
   
 
   // ... (Data Fetching logic remains the same) ...
-  const fetchWords = useCallback(async (page) => {
+  const fetchWords = useCallback(async (page, categoryId) => {
     setError(null);
     const skip = (page - 1) * wordsPerPage;
+    let url = `${API_BASE_URL}/words/?skip=${skip}&limit=${wordsPerPage}`;
+    // If a category is selected, add it to the request URL
+    if (categoryId) {
+      url += `&category_id=${categoryId}`;
+    }
     try {
-      const response = await fetch(`${API_BASE_URL}/words/?skip=${skip}&limit=${wordsPerPage}`);
+      const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch words. Please ensure the backend server is running and supports pagination.');
       
       const data = await response.json();
@@ -83,19 +88,28 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      // Fetch categories once, and words for the current page
-      await Promise.all([fetchWords(pageNumber), fetchCategories()]);
-      setIsLoading(false);
-    };
-    loadData();
-  }, [fetchWords, fetchCategories, pageNumber]);
+  const loadData = async () => {
+    setIsLoading(true);
+    // Pass both the page number and selected category to fetchWords
+    await fetchWords(pageNumber, selectedCategory);
+    setIsLoading(false);
+  };
+  // We only load categories once, so that can be a separate effect
+  if (categories.length === 0) {
+      fetchCategories();
+  }
+  loadData();
+}, [pageNumber, selectedCategory, fetchWords, categories.length, fetchCategories]);
 
 
   // ... (Event Handlers logic remains the same) ...
   const handleOpenAddModal = () => setIsAddModalOpen(true);
   const handleCloseAddModal = () => setIsAddModalOpen(false);
+
+  const handleCategorySelect = (categoryId) => {
+  setSelectedCategory(categoryId);
+  setPageNumber(1); // Reset to page 1 whenever a new category is chosen
+};
   
   const handleOpenDetailModal = (word) => {
     setSelectedWord(word);
@@ -157,17 +171,9 @@ export default function App() {
     }
   };
 
-  const filteredWords = words.filter(word => {
-    // Category filter logic
-    const categoryMatch = selectedCategory
-      ? word.categories.some(cat => cat.id === selectedCategory)
-      : true; // If no category is selected, all words match
-
-    // Search term filter logic
-    const searchMatch = word.german_word.toLowerCase().includes(searchTerm.toLowerCase());
-
-    return categoryMatch && searchMatch;
-  });
+  const filteredWords = words.filter(word => 
+  word.german_word.toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   const renderContent = () => {
     if (isLoading) {
@@ -245,7 +251,7 @@ return (
             <CategoryFilter
               categories={categories}
               selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
+              onSelectCategory={handleCategorySelect}
               onAddCategory={handleOpenAddCategoryModal}
             />
           )}

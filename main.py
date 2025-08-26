@@ -1,6 +1,6 @@
 # main.py
 # This is the main entry point for the FastAPI application.
-
+from typing import Optional
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 import uvicorn
@@ -70,12 +70,14 @@ def create_word(word: schemas.WordCreate, db: Session = Depends(get_db)):
 #     return words
 
 @app.get("/words/", response_model=schemas.WordsResponse, tags=["Words"])
-def read_words(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_words(skip: int = 0, limit: int = 100, category_id: Optional[int] = None, db: Session = Depends(get_db)):
     """
     Retrieve a list of all words from the database with pagination
     and the total word count.
     """
-    words_data = crud.get_words(db, skip=skip, limit=limit)
+    words_data = crud.get_words(
+        db, skip=skip, limit=limit, category_id=category_id
+    )
     return words_data
 
 @app.get("/words/{word_id}", response_model=schemas.Word, tags=["Words"])

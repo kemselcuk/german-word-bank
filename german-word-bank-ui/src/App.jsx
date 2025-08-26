@@ -47,7 +47,10 @@ export default function App() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [wordToUpdate, setWordToUpdate] = useState(null);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState('home'); 
+  const [currentPage, setCurrentPage] = useState(() => {
+    const savedView = localStorage.getItem('currentPage');
+    return savedView || 'home';
+  }); 
   const [isFlashcardModalOpen, setIsFlashcardModalOpen] = useState(false);
   const [isWriteTheWordModalOpen, setIsWriteTheWordModalOpen] = useState(false);
   const [wordsPerPage] = useState(20); // Show 20 words per page
@@ -234,6 +237,11 @@ export default function App() {
   word.german_word.toLowerCase().includes(searchTerm.toLowerCase())
 );
 
+const navigate = (view) => {
+  localStorage.setItem('currentPage', view); // Save the view to storage
+  setCurrentPage(view); // Update the state
+};
+
   const renderContent = () => {
     if (isLoading) {
       return <div className="text-center"><Spinner animation="border" /></div>;
@@ -268,7 +276,7 @@ export default function App() {
   // --- Render UI ---
 return (
     <>
-      <Header onNavigate={setCurrentPage}/>
+      <Header onNavigate={navigate}/>
       
       <div className="app-container content-wrapper">
         {currentPage === 'home' && (

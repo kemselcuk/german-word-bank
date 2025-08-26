@@ -479,3 +479,20 @@ color: var(--primary-red) !important;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 1rem;
 }
+
+/* --- Artikel Colors --- */
+.artikel-der, .artikel-die, .artikel-das {
+  font-weight: bold;
+}
+
+.artikel-der {
+  color: #3399ff !important;
+}
+
+.artikel-die {
+  color: palevioletred !important;
+}
+
+.artikel-das {
+  color: #28a745 !important;
+}

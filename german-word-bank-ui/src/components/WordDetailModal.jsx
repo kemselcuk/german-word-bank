@@ -4,13 +4,16 @@ import { Pencil } from 'lucide-react';
 
 const WordDetailModal = ({ show, word, handleClose, onEdit }) => {
   if (!word) return null;
+  const artikelClass = word.artikel ? `artikel-${word.artikel}` : '';
 
   return (
     <Modal show={show} onHide={handleClose} size="lg" centered>
       <Modal.Header closeButton>
         <Modal.Title>
           <span className="modal-title-glow fs-2 fw-bold">
-            {word.artikel && `${word.artikel} `}{word.german_word}
+            {/* Conditionally render the colored article */}
+            {word.artikel && <span className={`me-2 ${artikelClass}`}>{word.artikel}</span>}
+            {word.german_word}
           </span>
           <p className="text fs-7 mb-0">{word.english_translation} --- {word.turkish_translation}</p>
         </Modal.Title>

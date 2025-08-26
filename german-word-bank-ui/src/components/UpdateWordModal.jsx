@@ -147,11 +147,31 @@ const UpdateWordModal = ({ show, word, categories, handleClose, onWordUpdated })
           </Row>
           {/* Noun Fields */}
           {wordType === 'noun' && (
-            <Row>
-              <Col><Form.Group className="mb-3"><Form.Control type="text" name="artikel" value={formData.artikel} onChange={handleChange} placeholder="Artikel (der, die, das)" /></Form.Group></Col>
-              <Col><Form.Group className="mb-3"><Form.Control type="text" name="plural_form" value={formData.plural_form} onChange={handleChange} placeholder="Plural Form" /></Form.Group></Col>
-            </Row>
-          )}
+             <Row>
+               <Col md={6}>
+                 <Form.Group className="mb-3">
+                   <Form.Label>Artikel</Form.Label>
+                   <div className="category-pill-container">
+                     {['der', 'die', 'das'].map(art => (
+                       <div
+                         key={art}
+                         className={`category-pill ${formData.artikel === art ? 'selected' : ''}`}
+                         onClick={() => setFormData(prev => ({ ...prev, artikel: art }))}
+                       >
+                         {art}
+                       </div>
+                     ))}
+                   </div>
+                 </Form.Group>
+               </Col>
+               <Col md={6}>
+                 <Form.Group className="mb-3">
+                   <Form.Label>Plural Form</Form.Label>
+                   <Form.Control type="text" name="plural_form" value={formData.plural_form} onChange={handleChange} placeholder="Plural Form" />
+                 </Form.Group>
+               </Col>
+             </Row>
+           )}
           {/* Verb Fields */}
           {wordType === 'verb' && (
             <Form.Group className="mb-3">

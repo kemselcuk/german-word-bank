@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Alert, InputGroup } from 'react-bootstrap';
+import { BrainCircuit } from 'lucide-react';
+import AiHelperModal from './AiHelperModal.jsx';
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
@@ -20,6 +22,35 @@ const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded 
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [isAiHelperOpen, setIsAiHelperOpen] = useState(false);
+
+  const handleApplyAiData = (aiData) => {
+    // Populate the main form data
+    setFormData(prev => ({
+      ...prev,
+      german_word: aiData.german_word || prev.german_word,
+      artikel: aiData.artikel || prev.artikel,
+      english_translation: aiData.english_translation || prev.english_translation,
+      turkish_translation: aiData.turkish_translation || prev.turkish_translation,
+      basic_sentence: aiData.basic_sentence || prev.basic_sentence,
+      advanced_sentence: aiData.advanced_sentence || prev.advanced_sentence,
+      note: aiData.note || prev.note,
+      plural_form: aiData.plural_form || prev.plural_form,
+    }));
+
+    // Populate the conjugation inputs if they exist in the AI data
+    if (aiData.conjugations?.präsens) {
+      const präsens = aiData.conjugations.präsens;
+      setConjugationInputs({
+        ich: präsens.ich || '',
+        du: präsens.du || '',
+        er_sie_es: präsens['er/sie/es'] || '',
+        wir: präsens.wir || '',
+        ihr: präsens.ihr || '',
+        sie_Sie: präsens['sie/Sie'] || '',
+      });
+    }
+  };
 
   const wordTypeOptions = [
     { value: 'other', label: 'Other' },
@@ -124,6 +155,7 @@ const handleConjugationChange = (e) => {
 
 
   return (
+    <>
     <Modal show={show} onHide={handleClose} size="lg" centered>
       <Modal.Header closeButton>
         <Modal.Title className="modal-title-glow">Add a New Word</Modal.Title>
@@ -145,6 +177,14 @@ const handleConjugationChange = (e) => {
               ))}
             </div>
           </Form.Group>
+          <Button
+              variant="outline-secondary"
+              className="ai-helper-button"
+              onClick={() => setIsAiHelperOpen(true)}
+            >
+              <BrainCircuit size={18} className="me-2" />
+              Fill from AI
+            </Button>
 
           <Row>
             <Col md={4}><Form.Group className="mb-3"><Form.Control type="text" name="german_word" value={formData.german_word} onChange={handleChange} placeholder="German Word" required /></Form.Group></Col>
@@ -231,6 +271,13 @@ const handleConjugationChange = (e) => {
         </Form>
       </Modal.Body>
     </Modal>
+    <AiHelperModal
+        show={isAiHelperOpen}
+        handleClose={() => setIsAiHelperOpen(false)}
+        wordType={wordType}
+        onApplyData={handleApplyAiData}
+      />
+      </>
   );
 };
 

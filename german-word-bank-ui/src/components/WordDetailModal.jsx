@@ -53,7 +53,7 @@ const WordDetailModal = ({ show, word, handleClose, onEdit }) => {
           </div>
         )}
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="no-border-top">
         <Button variant="outline-warning" onClick={() => onEdit(word)}>
           <Pencil size={16} className="me-2" />
           Edit Word

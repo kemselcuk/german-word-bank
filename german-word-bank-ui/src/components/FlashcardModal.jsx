@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { ArrowRight, RotateCw } from 'lucide-react';
+import GermanWord from './GermanWord.jsx';
 
 const FlashcardModal = ({ show, handleClose, words }) => {
   const [shuffledWords, setShuffledWords] = useState([]);
@@ -45,7 +46,7 @@ const FlashcardModal = ({ show, handleClose, words }) => {
                 <div className="flashcard-face flashcard-front">
                   <p className="text mb-2">German Word</p>
                   <h2 className="flashcard-german-word">
-                    {currentWord.artikel && `${currentWord.artikel} `}{currentWord.german_word}
+                    <GermanWord word={currentWord} />
                   </h2>
                 </div>
                 {/* Back of the Card */}

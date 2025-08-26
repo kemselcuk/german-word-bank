@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { ArrowRight, CheckCircle, RotateCcw } from 'lucide-react';
+import GermanWord from './GermanWord.jsx';
 
 const WriteTheWordModal = ({ show, handleClose, words }) => {
   const [shuffledWords, setShuffledWords] = useState([]);
@@ -98,7 +99,12 @@ const WriteTheWordModal = ({ show, handleClose, words }) => {
             {/* THIS IS THE KEY FIX for the feedback bug. It only shows when answered. */}
             {isAnswered && feedback && (
               <Alert variant="light" className={`feedback-alert ${feedback}`}>
-                {feedback === 'correct' ? 'Correct!' : `Incorrect. The answer is: ${currentWord.german_word}`}
+                {feedback === 'correct' ? 'Correct!' : (
+              <>
+                Incorrect. The answer is:{' '}
+                <GermanWord word={currentWord} />
+              </>
+            )}
               </Alert>
             )}
 

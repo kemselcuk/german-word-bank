@@ -61,13 +61,22 @@ def create_word(word: schemas.WordCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="This German word already exists in the database.")
     return crud.create_word(db=db, word=word)
 
-@app.get("/words/", response_model=list[schemas.Word], tags=["Words"])
+# @app.get("/words/", response_model=list[schemas.Word], tags=["Words"])
+# def read_words(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+#     """
+#     Retrieve a list of all words from the database with pagination.
+#     """
+#     words = crud.get_words(db, skip=skip, limit=limit)
+#     return words
+
+@app.get("/words/", response_model=schemas.WordsResponse, tags=["Words"])
 def read_words(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
-    Retrieve a list of all words from the database with pagination.
+    Retrieve a list of all words from the database with pagination
+    and the total word count.
     """
-    words = crud.get_words(db, skip=skip, limit=limit)
-    return words
+    words_data = crud.get_words(db, skip=skip, limit=limit)
+    return words_data
 
 @app.get("/words/{word_id}", response_model=schemas.Word, tags=["Words"])
 def read_word(word_id: int, db: Session = Depends(get_db)):

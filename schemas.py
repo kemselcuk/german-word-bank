@@ -60,3 +60,7 @@ class Word(WordBase):
 # back to the Word schema to avoid circular import issues.
 class Category(Category):
     words: List[Word] = []
+
+class WordsResponse(BaseModel):
+    total_count: int
+    words: List[Word]

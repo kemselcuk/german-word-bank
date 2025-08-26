@@ -15,9 +15,22 @@ def get_word_by_german_word(db: Session, german_word: str):
     """Fetch a single word by its German name."""
     return db.query(models.Word).filter(models.Word.german_word == german_word).first()
 
+    # def get_words(db: Session, skip: int = 0, limit: int = 100):
+    #     """Fetch a list of words with pagination."""
+    #     return db.query(models.Word).offset(skip).limit(limit).all()
+
 def get_words(db: Session, skip: int = 0, limit: int = 100):
-    """Fetch a list of words with pagination."""
-    return db.query(models.Word).offset(skip).limit(limit).all()
+    """
+    Fetch a list of words with pagination and the total count.
+    """
+    # Query to get the paginated list of words
+    words = db.query(models.Word).offset(skip).limit(limit).all()
+    
+    # Query to get the total number of words in the table
+    total_count = db.query(models.Word).count()
+    
+    # Return both in a dictionary
+    return {"words": words, "total_count": total_count}
 
 def create_word(db: Session, word: schemas.WordCreate):
     """Create a new word record in the database."""

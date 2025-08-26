@@ -26,6 +26,7 @@ import ExercisesPage from './components/ExercisesPage.jsx';
 import FlashcardModal from './components/FlashcardModal.jsx';
 import WriteTheWordModal from './components/WriteTheWordModal.jsx';
 import HomePage from './components/HomePage.jsx';
+import PaginationComponent from './components/PaginationComponent.jsx';
 
 // --- Configuration ---
 const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -48,21 +49,27 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState('home'); 
   const [isFlashcardModalOpen, setIsFlashcardModalOpen] = useState(false);
   const [isWriteTheWordModalOpen, setIsWriteTheWordModalOpen] = useState(false);
+  const [wordsPerPage] = useState(20); // Show 20 words per page
+  const [totalWords, setTotalWords] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
   
   
 
   // ... (Data Fetching logic remains the same) ...
-  const fetchWords = useCallback(async () => {
+  const fetchWords = useCallback(async (page) => {
     setError(null);
+    const skip = (page - 1) * wordsPerPage;
     try {
-      const response = await fetch(`${API_BASE_URL}/words/?limit=100`);
-      if (!response.ok) throw new Error('Failed to fetch words. Please ensure the backend server is running.');
+      const response = await fetch(`${API_BASE_URL}/words/?skip=${skip}&limit=${wordsPerPage}`);
+      if (!response.ok) throw new Error('Failed to fetch words. Please ensure the backend server is running and supports pagination.');
+      
       const data = await response.json();
-      setWords(data);
+      setWords(data.words); // The words are now in a nested property
+      setTotalWords(data.total_count); // Set the total count
     } catch (err) {
       setError(err.message);
     }
-  }, []);
+  }, [wordsPerPage]);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -78,11 +85,12 @@ export default function App() {
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      await Promise.all([fetchWords(), fetchCategories()]);
+      // Fetch categories once, and words for the current page
+      await Promise.all([fetchWords(pageNumber), fetchCategories()]);
       setIsLoading(false);
     };
     loadData();
-  }, [fetchWords, fetchCategories]);
+  }, [fetchWords, fetchCategories, pageNumber]);
 
 
   // ... (Event Handlers logic remains the same) ...
@@ -118,15 +126,28 @@ export default function App() {
   };
 
   const handleWordAdded = () => {
-    fetchWords();
+    handleCloseAddModal();
     setSearchTerm('');
-    setCurrentPage('words');
+    if (pageNumber !== 1) {
+      setPageNumber(1);
+    } else {
+      // If already on page 1, we need to manually trigger a refetch
+      fetchWords(1);
+      fetchCategories(); // Also refetch categories in case a new one was added
+    }
   };
 
   const handleWordUpdated = () => {
-    fetchWords();
     handleCloseUpdateModal();
+    // Go to page 1 to see the updated word
+     if (pageNumber !== 1) {
+      setPageNumber(1);
+    } else {
+      fetchWords(1);
+    }
   };
+
+  const totalPages = Math.ceil(totalWords / wordsPerPage);
 
   const handleStartExercise = (exerciseKey) => {
     if (exerciseKey === 'flashcards') {
@@ -232,6 +253,11 @@ return (
           <main>
             {renderContent()}
           </main>
+          <PaginationComponent
+              currentPage={pageNumber}
+              totalPages={totalPages}
+              onPageChange={setPageNumber}
+            />
         </Container>
         )}
         {currentPage === 'exercises' && (

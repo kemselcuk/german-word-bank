@@ -62,7 +62,7 @@ const FlashcardModal = ({ show, handleClose, words }) => {
           </div>
         )}
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="no-border-top">
         <Button variant="outline-secondary" onClick={handleFlip}>
           <RotateCw size={16} className="me-2" />
           Flip Card

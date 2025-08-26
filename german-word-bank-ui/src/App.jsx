@@ -257,6 +257,7 @@ return (
         <WriteTheWordModal 
         show={isWriteTheWordModalOpen} 
         handleClose={() => setIsWriteTheWordModalOpen(false)} 
+        words={words}
         />
     </>
   );

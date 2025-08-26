@@ -400,4 +400,52 @@ color: #FFCE00 !important; /* Use your primary red color variable */
 color: var(--primary-red) !important;
 }
 
+.no-border-top {
+  border-top: none !important;
+}
 
+/* --- Write the Word Exercise --- */
+.write-word-prompt {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #000;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+}
+
+.write-word-prompt .prompt-label {
+  color: #888;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.write-word-prompt .prompt-translation {
+  font-size: 1.75rem;
+  font-weight: 500;
+}
+
+.write-word-input {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.feedback-alert {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+  text-align: center;
+  border-width: 2px;
+}
+
+.feedback-alert.correct {
+  color: #28a745;
+  border-color: #28a745;
+  background-color: rgba(40, 167, 69, 0.1);
+}
+
+.feedback-alert.incorrect {
+  color: var(--primary-red);
+  border-color: var(--primary-red);
+  background-color: rgba(255, 13, 13, 0.1);
+}

@@ -106,6 +106,14 @@ const handleConjugationChange = (e) => {
     setSubmitError(null);
 
     let payload = { ...formData };
+    
+    // If no categories were selected, find and assign the "no category" ID
+    if (payload.category_ids.length === 0) {
+      const noCategory = categories.find(cat => cat.name.toLowerCase() === 'no category');
+      if (noCategory) {
+        payload.category_ids = [noCategory.id];
+      }
+    }
 
     if (wordType === 'verb') {
     const formattedConjugations = {

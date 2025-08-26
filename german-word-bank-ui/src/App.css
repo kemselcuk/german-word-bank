@@ -303,3 +303,101 @@ body {
   border-style: solid;
   color: var(--primary-red) !important;
 }
+
+/* --- Exercise Page --- */
+.exercise-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.exercise-card:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 0 15px var(--glow-color);
+  border-color: var(--primary-red);
+}
+
+.exercise-card-icon {
+  color: var(--primary-red);
+}
+
+.exercise-card-title {
+  color: var(--primary-red);
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.exercise-card-description {
+  color: #ccc;
+}
+
+/* --- Flashcard Exercise --- */
+.flashcard-container {
+  min-height: 250px;
+  perspective: 1000px; /* Gives the card a 3D perspective */
+}
+
+.flashcard {
+  width: 100%;
+  height: 250px;
+  position: relative;
+  transition: transform 0.6s;
+  transform-style: preserve-3d; /* This is key for the 3D effect */
+  cursor: pointer;
+}
+
+.flashcard.is-flipped {
+  transform: rotateY(180deg); /* The flip animation */
+}
+
+.flashcard-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden; /* Hides the back of the card when it's not facing you */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--card-bg);
+}
+
+.flashcard-back {
+  transform: rotateY(180deg); /* Puts the back face on the other side */
+}
+
+.flashcard-german-word {
+  color: var(--primary-red);
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.flashcard-translation {
+  font-size: 1.75rem;
+}
+
+.flashcard-progress {
+  color: #888;
+  margin-top: 1rem;
+}
+
+.english-translation-text {
+color: #FFCE00 !important; /* Use your primary red color variable */
+}
+
+.turkish-translation-text {
+color: var(--primary-red) !important;
+}
+
+

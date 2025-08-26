@@ -22,6 +22,9 @@ import Header from './components/Header.jsx';
 import CategoryFilter from './components/CategoryFilter.jsx';
 import UpdateWordModal from './components/UpdateWordModal.jsx';
 import AddCategoryModal from './components/AddCategoryModal.jsx';
+import ExercisesPage from './components/ExercisesPage.jsx';
+import FlashcardModal from './components/FlashcardModal.jsx';
+import WriteTheWordModal from './components/WriteTheWordModal.jsx';
 
 // --- Configuration ---
 const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -41,6 +44,9 @@ export default function App() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [wordToUpdate, setWordToUpdate] = useState(null);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState('words'); // 'words' or 'exercises'
+  const [isFlashcardModalOpen, setIsFlashcardModalOpen] = useState(false);
+  const [isWriteTheWordModalOpen, setIsWriteTheWordModalOpen] = useState(false);
   
 
   // ... (Data Fetching logic remains the same) ...
@@ -119,6 +125,14 @@ export default function App() {
     handleCloseUpdateModal();
   };
 
+  const handleStartExercise = (exerciseKey) => {
+    if (exerciseKey === 'flashcards') {
+      setIsFlashcardModalOpen(true);
+    } else if (exerciseKey === 'write_the_word') {
+      setIsWriteTheWordModalOpen(true);
+    }
+  };
+
   const filteredWords = words.filter(word => {
     // Category filter logic
     const categoryMatch = selectedCategory
@@ -165,9 +179,10 @@ export default function App() {
   // --- Render UI ---
 return (
     <>
-      <Header />
+      <Header onNavigate={setCurrentPage}/>
       
       <div className="app-container content-wrapper">
+        {currentPage === 'words' && (
         <Container>
           {/* This header is the title on the page, not the new navbar */}
           <header className="text-center mb-5">
@@ -203,12 +218,18 @@ return (
               onAddCategory={handleOpenAddCategoryModal}
             />
           )}
-
-
+        
           <main>
             {renderContent()}
           </main>
         </Container>
+        )}
+        {currentPage === 'exercises' && (
+          <ExercisesPage onStartExercise={handleStartExercise} />
+        )}
+        </div>
+
+        {/* --- Modals --- */}
 
         {isAddModalOpen && <AddWordModal show={isAddModalOpen} initialWord={searchTerm} categories={categories} handleClose={handleCloseAddModal} onWordAdded={handleWordAdded} />}
         {isDetailModalOpen && <WordDetailModal show={isDetailModalOpen} word={selectedWord} handleClose={handleCloseDetailModal} onEdit={handleOpenUpdateModal} />}
@@ -228,7 +249,15 @@ return (
           onCategoryAdded={handleCategoryAdded}
         />
         )}
-      </div>
+        <FlashcardModal 
+        show={isFlashcardModalOpen} 
+        handleClose={() => setIsFlashcardModalOpen(false)} 
+        words={words} 
+        />
+        <WriteTheWordModal 
+        show={isWriteTheWordModalOpen} 
+        handleClose={() => setIsWriteTheWordModalOpen(false)} 
+        />
     </>
   );
 }

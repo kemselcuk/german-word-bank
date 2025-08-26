@@ -25,6 +25,7 @@ import AddCategoryModal from './components/AddCategoryModal.jsx';
 import ExercisesPage from './components/ExercisesPage.jsx';
 import FlashcardModal from './components/FlashcardModal.jsx';
 import WriteTheWordModal from './components/WriteTheWordModal.jsx';
+import HomePage from './components/HomePage.jsx';
 
 // --- Configuration ---
 const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -44,9 +45,10 @@ export default function App() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [wordToUpdate, setWordToUpdate] = useState(null);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState('words'); // 'words' or 'exercises'
+  const [currentPage, setCurrentPage] = useState('home'); 
   const [isFlashcardModalOpen, setIsFlashcardModalOpen] = useState(false);
   const [isWriteTheWordModalOpen, setIsWriteTheWordModalOpen] = useState(false);
+  
   
 
   // ... (Data Fetching logic remains the same) ...
@@ -118,6 +120,7 @@ export default function App() {
   const handleWordAdded = () => {
     fetchWords();
     setSearchTerm('');
+    setCurrentPage('words');
   };
 
   const handleWordUpdated = () => {
@@ -182,6 +185,13 @@ return (
       <Header onNavigate={setCurrentPage}/>
       
       <div className="app-container content-wrapper">
+        {currentPage === 'home' && (
+          <HomePage 
+            words={words} 
+            onOpenAddWordModal={handleOpenAddModal} 
+            onWordClick={handleOpenDetailModal}
+          />
+        )}
         {currentPage === 'words' && (
         <Container>
           {/* This header is the title on the page, not the new navbar */}

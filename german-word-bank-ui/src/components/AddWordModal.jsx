@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Alert, InputGroup } from 'react-bootstrap';
-import { BrainCircuit } from 'lucide-react';
+import { BrainCircuit, Plus } from 'lucide-react';
 import AiHelperModal from './AiHelperModal.jsx';
+
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
-const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded }) => {
+const AddWordModal = ({ show, initialWord, categories, handleClose, onWordAdded, onAddCategory }) => {
   // ... (State and handler logic remains the same) ...
   const [wordType, setWordType] = useState('other');
   const [formData, setFormData] = useState({
@@ -265,6 +266,13 @@ const handleConjugationChange = (e) => {
                   </div>
                 );
               })}
+              <div
+                className="category-pill category-pill-add"
+                onClick={onAddCategory}
+                title="Create New Category"
+              >
+                <Plus size={18} />
+              </div>
             </div>
           </Form.Group>
           

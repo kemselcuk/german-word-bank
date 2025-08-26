@@ -70,13 +70,14 @@ def create_word(word: schemas.WordCreate, db: Session = Depends(get_db)):
 #     return words
 
 @app.get("/words/", response_model=schemas.WordsResponse, tags=["Words"])
-def read_words(skip: int = 0, limit: int = 100, category_id: Optional[int] = None, db: Session = Depends(get_db)):
+def read_words(skip: int = 0, limit: int = 100, category_id: Optional[int] = None, ordering: Optional[str] = None, db: Session = Depends(get_db)):
     """
-    Retrieve a list of all words from the database with pagination
-    and the total word count.
+    Retrieve words from the database with pagination and optional sorting.
+    - Can be filtered by category_id.
+    - Can be sorted using the 'ordering' parameter (e.g., 'id', '-id').
     """
     words_data = crud.get_words(
-        db, skip=skip, limit=limit, category_id=category_id
+        db, skip=skip, limit=limit, category_id=category_id, ordering=ordering
     )
     return words_data
 

@@ -27,6 +27,7 @@ import FlashcardModal from './components/FlashcardModal.jsx';
 import WriteTheWordModal from './components/WriteTheWordModal.jsx';
 import HomePage from './components/HomePage.jsx';
 import PaginationComponent from './components/PaginationComponent.jsx';
+import ConfirmModal from './components/ConfirmModal.jsx';
 
 // --- Configuration ---
 const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -52,6 +53,9 @@ export default function App() {
   const [wordsPerPage] = useState(20); // Show 20 words per page
   const [totalWords, setTotalWords] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [recentWords, setRecentWords] = useState([]);
   
   
 
@@ -87,19 +91,37 @@ export default function App() {
     }
   }, []);
 
+    const fetchRecentWords = useCallback(async () => {
+    try {
+      // This API call ignores pagination and specifically gets the 10 newest words
+      const response = await fetch(`${API_BASE_URL}/words/?ordering=-id&skip=0&limit=10`);
+      if (!response.ok) throw new Error('Failed to fetch recent words.');
+      const data = await response.json();
+      setRecentWords(data.words);
+    } catch (err) {
+      console.error("Fetch recent words error:", err);
+      // Don't set the main error state for this, as it's a background task
+      }
+  }, []);
+
   useEffect(() => {
-  const loadData = async () => {
-    setIsLoading(true);
-    // Pass both the page number and selected category to fetchWords
-    await fetchWords(pageNumber, selectedCategory);
-    setIsLoading(false);
-  };
-  // We only load categories once, so that can be a separate effect
-  if (categories.length === 0) {
-      fetchCategories();
-  }
-  loadData();
-}, [pageNumber, selectedCategory, fetchWords, categories.length, fetchCategories]);
+    const loadData = async () => {
+      setIsLoading(true);
+      // Pass both the page number and selected category to fetchWords
+      await fetchWords(pageNumber, selectedCategory);
+      setIsLoading(false);
+    };
+    // We only load categories once, so that can be a separate effect
+    if (categories.length === 0) {
+        fetchCategories();
+    }
+    loadData();
+  }, [pageNumber, selectedCategory, fetchWords, categories.length, fetchCategories]);
+
+  useEffect(() => {
+    fetchCategories();
+    fetchRecentWords();
+  }, [fetchCategories, fetchRecentWords]);
 
 
   // ... (Event Handlers logic remains the same) ...
@@ -140,8 +162,10 @@ export default function App() {
   };
 
   const handleWordAdded = () => {
+    fetchRecentWords();
     handleCloseAddModal();
     setSearchTerm('');
+    setCurrentPage('words');
     if (pageNumber !== 1) {
       setPageNumber(1);
     } else {
@@ -152,12 +176,47 @@ export default function App() {
   };
 
   const handleWordUpdated = () => {
+    fetchRecentWords();
     handleCloseUpdateModal();
+    setCurrentPage('words');
     // Go to page 1 to see the updated word
      if (pageNumber !== 1) {
       setPageNumber(1);
     } else {
       fetchWords(1);
+    }
+  };
+
+  // This function opens the confirmation modal
+  const handleDeleteRequest = (wordId) => {
+    setItemToDelete(wordId); // Remember which word we're about to delete
+    setIsConfirmModalOpen(true);
+  };
+
+  // This function runs only after the user clicks "Confirm" in the modal
+  const executeDelete = async () => {
+    if (!itemToDelete) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/words/${itemToDelete}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete the word.');
+      }
+
+      // Close all modals and refetch the data
+      setIsConfirmModalOpen(false);
+      handleCloseDetailModal();
+      fetchWords(pageNumber, selectedCategory);
+      fetchRecentWords();
+      setItemToDelete(null);
+
+    } catch (err) {
+      console.error("Delete error:", err);
+      setError(err.message);
+      setIsConfirmModalOpen(false); // Close modal on error too
     }
   };
 
@@ -214,7 +273,7 @@ return (
       <div className="app-container content-wrapper">
         {currentPage === 'home' && (
           <HomePage 
-            words={words} 
+            recentWords={recentWords}
             onOpenAddWordModal={handleOpenAddModal} 
             onWordClick={handleOpenDetailModal}
           />
@@ -273,8 +332,8 @@ return (
 
         {/* --- Modals --- */}
 
-        {isAddModalOpen && <AddWordModal show={isAddModalOpen} initialWord={searchTerm} categories={categories} handleClose={handleCloseAddModal} onWordAdded={handleWordAdded} />}
-        {isDetailModalOpen && <WordDetailModal show={isDetailModalOpen} word={selectedWord} handleClose={handleCloseDetailModal} onEdit={handleOpenUpdateModal} />}
+        {isAddModalOpen && <AddWordModal show={isAddModalOpen} initialWord={searchTerm} categories={categories} handleClose={handleCloseAddModal} onWordAdded={handleWordAdded} onAddCategory={handleOpenAddCategoryModal} />}
+        {isDetailModalOpen && <WordDetailModal show={isDetailModalOpen} word={selectedWord} handleClose={handleCloseDetailModal} onEdit={handleOpenUpdateModal} onDelete={handleDeleteRequest}  />}
         {isUpdateModalOpen && (
         <UpdateWordModal
           show={isUpdateModalOpen}
@@ -291,15 +350,22 @@ return (
           onCategoryAdded={handleCategoryAdded}
         />
         )}
+        <ConfirmModal
+          show={isConfirmModalOpen}
+          handleClose={() => setIsConfirmModalOpen(false)}
+          handleConfirm={executeDelete}
+          title="Confirm Deletion"
+          body="Are you sure you want to permanently delete this word?"
+        />
         <FlashcardModal 
-        show={isFlashcardModalOpen} 
-        handleClose={() => setIsFlashcardModalOpen(false)} 
-        words={words} 
+          show={isFlashcardModalOpen} 
+          handleClose={() => setIsFlashcardModalOpen(false)} 
+          words={words} 
         />
         <WriteTheWordModal 
-        show={isWriteTheWordModalOpen} 
-        handleClose={() => setIsWriteTheWordModalOpen(false)} 
-        words={words}
+          show={isWriteTheWordModalOpen} 
+          handleClose={() => setIsWriteTheWordModalOpen(false)} 
+          words={words}
         />
     </>
   );

@@ -20,7 +20,7 @@ def get_word_by_german_word(db: Session, german_word: str):
     #     """Fetch a list of words with pagination."""
     #     return db.query(models.Word).offset(skip).limit(limit).all()
 
-def get_words(db: Session, skip: int = 0, limit: int = 100, category_id: Optional[int] = None):
+def get_words(db: Session, skip: int = 0, limit: int = 100, category_id: Optional[int] = None, ordering: Optional[str] = None):
     """
     Fetch a list of words with pagination and the total count.
     """
@@ -32,6 +32,29 @@ def get_words(db: Session, skip: int = 0, limit: int = 100, category_id: Optiona
         # This uses the 'categories' relationship defined in your models.
         # It finds words where ANY of their linked categories match the given id.
         query = query.filter(models.Word.categories.any(id=category_id))
+
+    if ordering:
+        # Determine sort direction (descending if the string starts with '-')
+        direction = "desc" if ordering.startswith("-") else "asc"
+        # Get the column name by removing the potential '-' prefix
+        column_name = ordering.lstrip('-')
+
+        # SECURITY: Whitelist of columns that are allowed to be sorted on.
+        # This prevents users from trying to sort on an invalid or sensitive column.
+        allowed_columns = [
+            "id", "german_word", "english_translation",
+            "turkish_translation", "created_at", "updated_at"
+        ]
+
+        if column_name in allowed_columns:
+            # Get the actual SQLAlchemy column object from the model
+            sort_column = getattr(models.Word, column_name)
+
+            # Apply the ordering to the query
+            if direction == "desc":
+                query = query.order_by(sort_column.desc())
+            else:
+                query = query.order_by(sort_column.asc())
 
     # First, get the total count from the (potentially filtered) query
     total_count = query.count()

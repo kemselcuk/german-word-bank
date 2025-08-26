@@ -1,8 +1,8 @@
 import React from 'react';
 import { Modal, Badge, Button } from 'react-bootstrap';
-import { Pencil } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 
-const WordDetailModal = ({ show, word, handleClose, onEdit }) => {
+const WordDetailModal = ({ show, word, handleClose, onEdit, onDelete }) => {
   if (!word) return null;
   const artikelClass = word.artikel ? `artikel-${word.artikel}` : '';
 
@@ -54,6 +54,10 @@ const WordDetailModal = ({ show, word, handleClose, onEdit }) => {
         )}
       </Modal.Body>
       <Modal.Footer className="no-border-top">
+        <Button variant="outline-danger" onClick={() => onDelete(word.id)}>
+          <Trash2 size={16} className="me-2" />
+          Delete
+        </Button>
         <Button variant="outline-warning" onClick={() => onEdit(word)}>
           <Pencil size={16} className="me-2" />
           Edit Word

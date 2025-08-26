@@ -1,11 +1,10 @@
 import React from 'react';
 import { Container, Row, Button } from 'react-bootstrap';
 import { PlusCircle } from 'lucide-react';
-import WordCard from './WordCard.jsx'; // We'll reuse the WordCard component
+import WordCard from './WordCard.jsx';
 
-const HomePage = ({ words, onOpenAddWordModal, onWordClick }) => {
-  // Get the 10 most recently added words (assuming the API returns them in descending order)
-  const recentWords = [...words].reverse().slice(0, 10);
+const HomePage = ({ recentWords, onOpenAddWordModal, onWordClick }) => {
+
 
   return (
     <Container>

@@ -2,9 +2,11 @@ import React from 'react';
 import { Container, Row, Button } from 'react-bootstrap';
 import { PlusCircle } from 'lucide-react';
 import WordCard from './WordCard.jsx';
+import germanBorders from '../assets/map.svg';
 
 const HomePage = ({ recentWords, onOpenAddWordModal, onWordClick }) => {
 
+//className="home-page-container"
 
   return (
     <Container>

@@ -28,6 +28,7 @@ import WriteTheWordModal from './components/WriteTheWordModal.jsx';
 import HomePage from './components/HomePage.jsx';
 import PaginationComponent from './components/PaginationComponent.jsx';
 import ConfirmModal from './components/ConfirmModal.jsx';
+import SettingsPage from './components/SettingsPage.jsx';
 
 // --- Configuration ---
 const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -335,6 +336,9 @@ return (
         )}
         {currentPage === 'exercises' && (
           <ExercisesPage onStartExercise={handleStartExercise} />
+        )}
+        {currentPage === 'settings' && (
+          <SettingsPage />
         )}
         </div>
 

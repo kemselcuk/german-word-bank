@@ -60,17 +60,21 @@ export default function App() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [recentWords, setRecentWords] = useState([]);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); 
   
   
 
   // ... (Data Fetching logic remains the same) ...
-  const fetchWords = useCallback(async (page, categoryId) => {
+  const fetchWords = useCallback(async (page, categoryId, search) => {
     setError(null);
     const skip = (page - 1) * wordsPerPage;
     let url = `${API_BASE_URL}/words/?skip=${skip}&limit=${wordsPerPage}`;
     // If a category is selected, add it to the request URL
     if (categoryId) {
       url += `&category_id=${categoryId}`;
+    }
+    if (search) {
+      url += `&search=${search}`;
     }
     try {
       const response = await fetch(url);
@@ -112,7 +116,7 @@ export default function App() {
     const loadData = async () => {
       setIsLoading(true);
       // Pass both the page number and selected category to fetchWords
-      await fetchWords(pageNumber, selectedCategory);
+      await fetchWords(pageNumber, selectedCategory, debouncedSearchTerm);
       setIsLoading(false);
     };
     // We only load categories once, so that can be a separate effect
@@ -120,12 +124,24 @@ export default function App() {
         fetchCategories();
     }
     loadData();
-  }, [pageNumber, selectedCategory, fetchWords, categories.length, fetchCategories]);
+  }, [pageNumber, selectedCategory, fetchWords, debouncedSearchTerm, categories.length, fetchCategories]);
 
   useEffect(() => {
     fetchCategories();
     fetchRecentWords();
   }, [fetchCategories, fetchRecentWords]);
+
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearchTerm(searchTerm);
+    setPageNumber(1); // Reset to page 1 on a new search
+  }, 500); // Wait 500ms after the user stops typing
+
+  // Cleanup function to clear the timer if the user types again
+  return () => {
+    clearTimeout(timer);
+  };
+}, [searchTerm]);
 
 
   // ... (Event Handlers logic remains the same) ...
@@ -234,14 +250,45 @@ export default function App() {
     }
   };
 
-  const filteredWords = words.filter(word => 
-  word.german_word.toLowerCase().includes(searchTerm.toLowerCase())
-);
+//   const filteredWords = words.filter(word => 
+//   word.german_word.toLowerCase().includes(searchTerm.toLowerCase())
+// );
 
 const navigate = (view) => {
   localStorage.setItem('currentPage', view); // Save the view to storage
   setCurrentPage(view); // Update the state
 };
+
+  // const renderContent = () => {
+  //   if (isLoading) {
+  //     return <div className="text-center"><Spinner animation="border" /></div>;
+  //   }
+  //   if (error) {
+  //     return <Alert className="text-center alert-custom">{error}</Alert>;
+  //   }
+  //   if (words.length === 0) {
+  //     return (
+  //       <Alert className="text-center alert-custom">
+  //         No words found yet. Add your first word using the button above!
+  //       </Alert>
+  //     );
+  //   }
+  //   if (filteredWords.length === 0) {
+  //     return <p className="text-center text-muted">No words match your search.</p>;
+  //   }
+  //   return (
+  //     <Row xs={2} sm={3} md={4} lg={5} className="g-4">
+  //       {filteredWords.map((word, index) => (
+  //         <WordCard 
+  //           key={word.id} 
+  //           word={word} 
+  //           onClick={handleOpenDetailModal} 
+  //           style={{ animationDelay: `${index * 50}ms` }} // Staggered animation
+  //         />
+  //       ))}
+  //     </Row>
+  //   );
+  // };
 
   const renderContent = () => {
     if (isLoading) {
@@ -250,24 +297,27 @@ const navigate = (view) => {
     if (error) {
       return <Alert className="text-center alert-custom">{error}</Alert>;
     }
+    // Check if the list is empty BECAUSE of a search
+    if (words.length === 0 && debouncedSearchTerm) {
+      return <p className="text-center text-muted">No words match your search.</p>;
+    }
+    // Check if the list is empty in general
     if (words.length === 0) {
       return (
         <Alert className="text-center alert-custom">
-          No words found yet. Add your first word using the button above!
+          No words found for this category or page.
         </Alert>
       );
     }
-    if (filteredWords.length === 0) {
-      return <p className="text-center text-muted">No words match your search.</p>;
-    }
+    // If we have words, map them
     return (
       <Row xs={2} sm={3} md={4} lg={5} className="g-4">
-        {filteredWords.map((word, index) => (
+        {words.map((word, index) => ( // <-- Use 'words' here
           <WordCard 
             key={word.id} 
             word={word} 
             onClick={handleOpenDetailModal} 
-            style={{ animationDelay: `${index * 50}ms` }} // Staggered animation
+            style={{ animationDelay: `${index * 50}ms` }}
           />
         ))}
       </Row>

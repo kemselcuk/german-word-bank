@@ -49,7 +49,7 @@ const AiHelperModal = ({ show, handleClose, wordType, onApplyData }) => {
       structure = base;
     }
 
-    const prompt = `For the German ${wordType} "${germanWord}", provide the following details in a pure JSON format, with no extra text or explanations before or after the JSON block.\n\n${JSON.stringify(structure, null, 2)}`;
+    const prompt = `For the German ${wordType} "${germanWord}", provide the following details in a pure JSON format, with no extra text or explanations before or after the JSON block. For the note field give information about the word in english. \n\n${JSON.stringify(structure, null, 2)}`;
     return { promptText: prompt, jsonStructure: structure };
   }, [wordType, germanWord]);
 
@@ -116,7 +116,10 @@ const AiHelperModal = ({ show, handleClose, wordType, onApplyData }) => {
                 {copied ? <Check size={16} /> : <Copy size={16} />}
               </Button>
             </div>
-            <p className="text mt-3">2. Paste the AI's full JSON response here.</p>
+            <div className="d-flex justify-content-between align-items-center mt-3 mb-2">
+              <p className="text mt-3">2. Paste the AI's full JSON response here.</p>
+              <Button className="btn-glow" onClick={handleApply}>Apply Data</Button>
+            </div>
             <Form.Control
               as="textarea"
               rows={8}
@@ -131,7 +134,6 @@ const AiHelperModal = ({ show, handleClose, wordType, onApplyData }) => {
       {step === 2 && (
         <Modal.Footer className="no-border-top">
           <Button variant="secondary" onClick={() => setStep(1)}>Back</Button>
-          <Button className="btn-glow" onClick={handleApply}>Apply Data</Button>
         </Modal.Footer>
       )}
     </Modal>

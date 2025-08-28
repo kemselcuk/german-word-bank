@@ -20,7 +20,7 @@ def get_word_by_german_word(db: Session, german_word: str):
     #     """Fetch a list of words with pagination."""
     #     return db.query(models.Word).offset(skip).limit(limit).all()
 
-def get_words(db: Session, skip: int = 0, limit: int = 100, category_id: Optional[int] = None, ordering: Optional[str] = None):
+def get_words(db: Session, skip: int = 0, limit: int = 100, category_id: Optional[int] = None, ordering: Optional[str] = None, search: Optional[str] = None):
     """
     Fetch a list of words with pagination and the total count.
     """
@@ -32,6 +32,14 @@ def get_words(db: Session, skip: int = 0, limit: int = 100, category_id: Optiona
         # This uses the 'categories' relationship defined in your models.
         # It finds words where ANY of their linked categories match the given id.
         query = query.filter(models.Word.categories.any(id=category_id))
+
+    # If a search term is provided, apply a filter to the query
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            (models.Word.german_word.ilike(search_term)) |
+            (models.Word.english_translation.ilike(search_term)) 
+        )
 
     if ordering:
         # Determine sort direction (descending if the string starts with '-')
@@ -133,3 +141,15 @@ def create_category(db: Session, category: schemas.CategoryCreate):
     db.commit()
     db.refresh(db_category)
     return db_category
+
+# --- Check Duplicate ---
+
+def get_word_by_german_and_english(db: Session, german_word: str, english_translation: str):
+    """
+    Fetch a single word by its exact German word and English translation pair.
+    Returns the word object if a match is found, otherwise None.
+    """
+    return db.query(models.Word).filter(
+        models.Word.german_word == german_word,
+        models.Word.english_translation == english_translation
+    ).first()

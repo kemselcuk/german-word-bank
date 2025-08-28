@@ -53,12 +53,22 @@ def read_root():
 def create_word(word: schemas.WordCreate, db: Session = Depends(get_db)):
     """
     Create a new word in the database.
-    - Checks if the word already exists.
+    - Checks if a word with the exact same German and English translation already exists.
     - Handles linking categories to the new word.
     """
-    db_word = crud.get_word_by_german_word(db, german_word=word.german_word)
+    # --- THIS IS THE UPDATED VALIDATION LOGIC ---
+    db_word = crud.get_word_by_german_and_english(
+        db,
+        german_word=word.german_word,
+        english_translation=word.english_translation
+    )
     if db_word:
-        raise HTTPException(status_code=400, detail="This German word already exists in the database.")
+        # The error message is now more specific
+        raise HTTPException(
+            status_code=400,
+            detail="A word with this exact German and English translation already exists."
+        )
+    # If the check passes, create the word
     return crud.create_word(db=db, word=word)
 
 # @app.get("/words/", response_model=list[schemas.Word], tags=["Words"])
@@ -70,14 +80,14 @@ def create_word(word: schemas.WordCreate, db: Session = Depends(get_db)):
 #     return words
 
 @app.get("/words/", response_model=schemas.WordsResponse, tags=["Words"])
-def read_words(skip: int = 0, limit: int = 100, category_id: Optional[int] = None, ordering: Optional[str] = None, db: Session = Depends(get_db)):
+def read_words(skip: int = 0, limit: int = 100, category_id: Optional[int] = None, ordering: Optional[str] = None, search: Optional[str] = None, db: Session = Depends(get_db)):
     """
     Retrieve words from the database with pagination and optional sorting.
     - Can be filtered by category_id.
     - Can be sorted using the 'ordering' parameter (e.g., 'id', '-id').
     """
     words_data = crud.get_words(
-        db, skip=skip, limit=limit, category_id=category_id, ordering=ordering
+        db, skip=skip, limit=limit, category_id=category_id, ordering=ordering, search=search
     )
     return words_data
 

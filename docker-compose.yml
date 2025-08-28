@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  # Backend Service (FastAPI)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app # Mounts your local code into the container for live reloading
+    container_name: german-word-bank-backend
+
+  # Frontend Service (React + Nginx)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        - VITE_API_BASE_URL=http://localhost:8000
+    ports:
+      - "5173:80" # Maps your local port 5173 to the container's port 80
+    depends_on:
+      - backend # Ensures the backend starts before the frontend
+    container_name: german-word-bank-frontend

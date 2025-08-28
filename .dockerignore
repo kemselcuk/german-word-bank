@@ -1,0 +1,14 @@
+# Ignore Python virtual environment
+venv/
+__pycache__/
+
+# Ignore database file (it will be mounted by docker-compose)
+wordbank.db
+
+# Ignore frontend node_modules (they will be installed inside the container)
+german-word-bank-ui/node_modules/
+
+# Docker files
+Dockerfile.backend
+Dockerfile.frontend
+docker-compose.yml

@@ -120,6 +120,19 @@ def delete_word(db: Session, word_id: int):
     db.commit()
     return True
 
+# --- Check Duplicate ---
+
+def get_word_by_german_and_english(db: Session, german_word: str, english_translation: str):
+    """
+    Fetch a single word by its exact German word and English translation pair.
+    Returns the word object if a match is found, otherwise None.
+    """
+    return db.query(models.Word).filter(
+        models.Word.german_word == german_word,
+        models.Word.english_translation == english_translation
+    ).first()
+
+
 # --- Category CRUD Functions ---
 
 def get_category(db: Session, category_id: int):
@@ -142,14 +155,17 @@ def create_category(db: Session, category: schemas.CategoryCreate):
     db.refresh(db_category)
     return db_category
 
-# --- Check Duplicate ---
+def delete_category(db: Session, category_id: int):
+    """Delete a category from the database by its ID."""
+    # First, find the category
+    db_category = get_category(db, category_id=category_id)
 
-def get_word_by_german_and_english(db: Session, german_word: str, english_translation: str):
-    """
-    Fetch a single word by its exact German word and English translation pair.
-    Returns the word object if a match is found, otherwise None.
-    """
-    return db.query(models.Word).filter(
-        models.Word.german_word == german_word,
-        models.Word.english_translation == english_translation
-    ).first()
+    # If it doesn't exist, we can't delete it
+    if not db_category:
+        return False
+
+    # If it exists, delete it and commit the change
+    db.delete(db_category)
+    db.commit()
+    return True
+

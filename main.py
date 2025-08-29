@@ -143,6 +143,17 @@ def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
     categories = crud.get_categories(db, skip=skip, limit=limit)
     return categories
 
+@app.delete("/categories/{category_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Categories"])
+def delete_category_entry(category_id: int, db: Session = Depends(get_db)):
+    """
+    Delete a category from the database by its ID.
+    """
+    success = crud.delete_category(db, category_id=category_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Category not found")
+    # If successful, a 204 No Content response is sent automatically
+    return
+
 # This allows running the app directly for development
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

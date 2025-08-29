@@ -327,7 +327,7 @@ const navigate = (view) => {
   // --- Render UI ---
 return (
     <>
-      <Header onNavigate={navigate}/>
+      <Header onNavigate={navigate} currentPage={currentPage}/>
       
       <div className="app-container content-wrapper">
         {currentPage === 'home' && (
